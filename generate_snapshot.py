@@ -27,26 +27,15 @@ awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, region, servi
 def main(event, context):
   try:
     # Register repository if not exists
-    if not re.search(repository, requests.get(host + "_cat/repositories", auth=awsauth).text):
+    if requests.get(url, auth=awsauth).status_code != 200:
 
-      print("Repository doesn't exists. Creating...")
-
-      payload = {
-        "type": "s3",
-        "settings": {
-          "bucket": bucket,
-          "role_arn": role
-        }
-      }
-
-      requests.put(url, auth=awsauth, json=payload, headers={"Content-Type": "application/json"})
-      print("Repository created.")
+      print("Repository doesn't exists. Please, create it after launch this function.")
 
     else:
 
       # Register snapshot if not exists. If exists, then show error a list it
       print("Repository exists. Verifying if the snapshot exists or not...")
-    
+
       if requests.get(url + "/" + today.strftime("%Y.%m.%d"), auth=awsauth).status_code == 404:     
         print("Snapshot doesn't exists. Creating and registering...")
         requests.put(url + "/" + today.strftime("%Y.%m.%d"), auth=awsauth)

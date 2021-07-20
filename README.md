@@ -1,7 +1,32 @@
-# ELK Snapshots
-Lambda function that do backup from your ELK indexes.
+# ELK Snapshots Utilities
+Lambda function and local script in python that do backup from your ELK indexes.
 
-## Use
+## Generate_repository.py
+Local script in python that creates the repository connection in your ELK, using a bucket S3.
+You must have configured aws cli in your system, to use a user permanent authentication.
+
+### Environments to change into script
+
+- **host**: the url of your ElasticSearch Service, with this format: *https://your_es_url/*.
+- **region**: region where you've created your ElasticSearch Service. Need it to AWS credentials request. Example: *eu-west-1*.
+- **bucket**: the name of the bucket where you've saved the snapshots. Example: *my_bucket_name*.
+- **repository**: the name of the repository where you want to saved the snapshots. Example: *my_repo_name*. Doesn't be necessary that this name will be like the bucket name.
+- **role**: arn from role that have permission to put snapshot in your bucket S3.
+
+### Use
+
+Once you have applyed your changes into the script, then launch it, using the next command:
+
+```bash
+
+python3 generate_repository.py
+
+```
+
+And wait for the results.
+
+## Generate_snapshot.py
+### Use
 
 1. Zip the file generate_snapshot.py.
 
@@ -31,19 +56,19 @@ zip -r your_layer_zip_name.zip python
 
 You need to setup this options:
 
-### Global Environments
+#### Global Environments
 
 - **host**: the url of your ElasticSearch Service, with this format: *https://your_es_url/*
 - **region**: region where you've created your ElasticSearch Service. Need it to AWS credentials request.
 - **bucket**: the name of the bucket where you've saved the snapshots.
-- **repository**: the name of the repository where you've saved the snapshots. You can insert any name that you want, at less that you've created a repository before, then insert its name. If you've inserted another name, then this function will create a new repository.
+- **repository**: the name of the repository where you've saved the snapshots, that has been connected before, using the script generate_repository.py. If you have inserted a repository name that have not been connected before, then you show an error. 
 - **role**: arn from role that have permission to put snapshot in your bucket S3.
 
-### AWS Cloudwatch Event Bridge
+#### AWS Cloudwatch Event Bridge
 
 For cron, you need to create a cron job, employing the service AWS Cloudwatch Event Bridge.
 
-### Basic setup
+#### Basic setup
 
 - Change the name of the controller to **generate_snapshot.main**.
 - Change timeout to 300 or upper, depends the size of your kibana indexes.
@@ -52,7 +77,7 @@ For cron, you need to create a cron job, employing the service AWS Cloudwatch Ev
 
 Make sure that your role have access to bucket S3, Cloudwatch for logging the launch and ES Service, and your lambda function has the permissions to launch the function.
 
-### Runtime
+#### Runtime
 
 Python 3.8.
 
