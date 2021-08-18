@@ -1,1 +1,4 @@
+elasticsearch-curator
 requests_aws4auth
+jsons
+aws_log_parser
